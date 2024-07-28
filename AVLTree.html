@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<script>
+ // Create node
+const Node = function(item){
+  this.item = item;
+  this.height = 1;
+  this.left = null;
+  this.right = null;
+}
+
+//AVL Tree
+const AVLTree = function(){
+  let root = null;
+  
+  //return height of the node
+  this.height = (N) => {
+    if (N === null){
+      return 0;
+    }
+    
+    return N.height;
+  }
+  
+  //right rotate
+  this.rightRotate = (y) => {
+    let x = y.left;
+    let T2 = x.right;
+    x.right = y;
+    y.left = T2;
+    y.height = Math.max(this.height(y.left), this.height(y.right)) + 1;
+    x.height = Math.max(this.height(x.left), this.height(x.right)) + 1;
+    console.log("Right Rotation Done");
+    return x;
+  }
+  
+  //left rotate
+  this.leftRotate = (x) => {
+    let y = x.right;
+    let T2 = y.left;
+    y.left = x;
+    x.right = T2;
+    x.height = Math.max(this.height(x.left), this.height(x.right)) + 1;
+    y.height = Math.max(this.height(y.left), this.height(y.right)) + 1;
+    console.log("Left Rotation Done");
+    return y;
+  }
+  
+  // get balance factor of a node
+  this.getBalanceFactor = (N) => {
+    if (N == null){
+      return 0;
+    }
+    
+    return this.height(N.left) - this.height(N.right);
+  }
+  
+  
+  // helper function to insert a node
+  const insertNodeHelper = (node, item) => {
+
+    // find the position and insert the node
+    if (node === null){
+      return (new Node(item));
+    }
+    
+    if (item < node.item){
+      node.left = insertNodeHelper(node.left, item);
+    }else if (item > node.item){
+      node.right = insertNodeHelper(node.right, item);
+    }else{
+      return node;
+    }
+    
+    // update the balance factor of each node and, balance the tree
+    node.height = 1 + Math.max(this.height(node.left), this.height(node.right));
+    
+    let balanceFactor = this.getBalanceFactor(node);
+    
+    if (balanceFactor > 1) {
+      if (item < node.left.item) {
+        return this.rightRotate(node);
+      } else if (item > node.left.item) {
+        node.left = this.leftRotate(node.left);
+        return this.rightRotate(node);
+      }
+    }
+    
+    if (balanceFactor < -1) {
+      if (item > node.right.item) {
+        return this.leftRotate(node);
+      } else if (item < node.right.item) {
+        node.right = this.rightRotate(node.right);
+        return this.leftRotate(node);
+      }
+    }
+    
+    return node;
+  }
+  
+  // insert a node
+  this.insertNode = (item) => {
+    // console.log(root);
+    root = insertNodeHelper(root, item);
+  }
+  
+    
+  // print the tree in pre - order
+  this.preOrder = () => {
+    preOrderHelper(root);
+  }
+  
+  const preOrderHelper = (node) => {
+    if (node) {
+      console.log(node.item);
+      preOrderHelper(node.left);
+      preOrderHelper(node.right);
+    }
+  }
+}
+
+
+tree= new AVLTree();
+tree.insertNode(33);
+tree.insertNode(13);
+tree.insertNode(53);
+//tree.insertNode(55); //left rotation
+tree.insertNode(9);
+tree.insertNode(21);
+tree.insertNode(100); //right rotation
+tree.insertNode(61);
+tree.insertNode(8);
+tree.insertNode(11);
+
+tree.preOrder();
+
+ 
+</script>
+    
+</body>
+</html>
